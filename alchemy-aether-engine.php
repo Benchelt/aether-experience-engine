@@ -33,6 +33,7 @@ require_once AW_AETHER_PATH . 'includes/class-aether-admin.php';
 require_once AW_AETHER_PATH . 'includes/class-aether-ui.php';
 require_once AW_AETHER_PATH . 'includes/class-aether-settings.php';
 require_once AW_AETHER_PATH . 'includes/class-aether-experience-provider.php';
+require_once AW_AETHER_PATH . 'includes/class-aether-module-registry.php';
 require_once AW_AETHER_PATH . 'includes/class-aether.php';
 
 // Register plugin lifecycle hooks.

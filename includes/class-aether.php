@@ -56,6 +56,13 @@ final class AW_Aether {
          */
         private $experience_provider = null;
 
+	/**
+	 * Server-side module registry.
+	 *
+	 * @var AW_Aether_Module_Registry|null
+	 */
+	private $module_registry = null;
+
         /**
 	 * Return the shared engine instance.
 	 *
@@ -96,6 +103,9 @@ final class AW_Aether {
                 $this->admin               = new AW_Aether_Admin();
                 $this->ui                  = new AW_Aether_UI();
                 $this->experience_provider = new AW_Aether_Experience_Provider();
+                $this->module_registry = new AW_Aether_Module_Registry();
+
+                $this->register_modules();
 
 		$this->assets->register();
                 $this->admin->register();
@@ -106,6 +116,98 @@ final class AW_Aether {
 		);
 
 		do_action( 'aw_aether_loaded', $this );
+	}
+
+
+	/**
+	 * Register the built-in Aether modules.
+	 *
+	 * @return void
+	 */
+	private function register_modules() {
+
+		$settings = AW_Aether_Settings::all();
+
+		$this->module_registry->register(
+			'events',
+			array(
+				'name'        => 'Event Dispatcher',
+				'description' => 'Coordinates communication between runtime components.',
+				'version'     => '0.2.0',
+				'type'        => 'core',
+			)
+		);
+
+		$this->module_registry->register(
+			'services',
+			array(
+				'name'         => 'Services Registry',
+				'description'  => 'Provides shared runtime services to Aether modules.',
+				'version'      => '0.8.0',
+				'type'         => 'core',
+				'dependencies' => array( 'events' ),
+			)
+		);
+
+		$this->module_registry->register(
+			'experience',
+			array(
+				'name'         => 'Experience Manager',
+				'description'  => 'Registers and activates atmospheric experiences.',
+				'version'      => '0.8.0',
+				'type'         => 'core',
+				'dependencies' => array( 'services' ),
+			)
+		);
+
+		$this->module_registry->register(
+			'audio',
+			array(
+				'name'         => 'Audio Module',
+				'description'  => 'Controls ambient audio playback and volume.',
+				'version'      => '0.9.0',
+				'type'         => 'feature',
+				'enabled'      => ! empty( $settings['audio_enabled'] ),
+				'dependencies' => array( 'experience' ),
+			)
+		);
+
+		$this->module_registry->register(
+			'visual',
+			array(
+				'name'         => 'Visual Module',
+				'description'  => 'Renders atmospheric visuals and particle effects.',
+				'version'      => '0.13.0',
+				'type'         => 'feature',
+				'enabled'      => ! empty( $settings['visuals_enabled'] ),
+				'dependencies' => array( 'experience' ),
+			)
+		);
+
+		$this->module_registry->register(
+			'ambience-toggle',
+			array(
+				'name'         => 'Ambience Interface',
+				'description'  => 'Provides the visitor-facing ambience control.',
+				'version'      => '0.5.0',
+				'type'         => 'interface',
+				'enabled'      => ! empty( $settings['ui_enabled'] ),
+				'dependencies' => array( 'audio' ),
+			)
+		);
+
+		/**
+		 * Fires after all built-in Aether modules have been registered.
+		 *
+		 * Third-party integrations can use the supplied registry to
+		 * register additional server-side module metadata.
+		 *
+		 * @param AW_Aether_Module_Registry $registry Module registry.
+		 */
+		do_action(
+			'aw_aether_register_modules',
+			$this->module_registry
+		);
 	}
 
 	/**
@@ -142,6 +244,15 @@ final class AW_Aether {
 	 */
 	public function experiences() {
 	        return $this->experience_provider;
+	}
+
+	/**
+	 * Return the server-side module registry.
+	 *
+	 * @return AW_Aether_Module_Registry|null
+	 */
+	public function modules() {
+		return $this->module_registry;
 	}
 
 	/**

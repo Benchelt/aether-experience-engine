@@ -740,3 +740,148 @@
 		width: 100%;
 	}
 }
+
+/* ---------------------------------------------------------
+ * Aether Modules Workspace — Version 0.19.0
+ * --------------------------------------------------------- */
+
+.aw-aether-module-count {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 18px;
+	border: 1px solid rgba(198, 167, 94, 0.22);
+	border-radius: 12px;
+	background: rgba(13, 11, 14, 0.48);
+}
+
+.aw-aether-module-count strong,
+.aw-aether-module-count span {
+	display: block;
+}
+
+.aw-aether-module-count strong {
+	color: var(--aether-gold);
+	font-family: Georgia, serif;
+	font-size: 28px;
+	font-weight: 400;
+}
+
+.aw-aether-module-count span {
+	color: var(--aether-muted);
+	font-size: 11px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.aw-aether-module-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 18px;
+}
+
+.aw-aether-module-card {
+	display: flex;
+	flex-direction: column;
+	min-height: 270px;
+	padding: 24px;
+	border: 1px solid rgba(198, 167, 94, 0.2);
+	border-radius: 14px;
+	background: var(--aether-panel);
+}
+
+.aw-aether-module-card-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+}
+
+.aw-aether-module-card h3 {
+	margin: 7px 0 0;
+	color: var(--aether-ivory);
+	font-family: Georgia, serif;
+	font-size: 23px;
+	font-weight: 400;
+}
+
+.aw-aether-module-type {
+	color: var(--aether-gold);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.aw-aether-module-status {
+	flex: 0 0 auto;
+	padding: 6px 9px;
+	border-radius: 999px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.aw-aether-module-status.is-enabled {
+	border: 1px solid rgba(112, 199, 156, 0.28);
+	background: rgba(112, 199, 156, 0.1);
+	color: #70c79c;
+}
+
+.aw-aether-module-status.is-disabled {
+	border: 1px solid rgba(198, 167, 94, 0.25);
+	background: rgba(198, 167, 94, 0.08);
+	color: var(--aether-gold);
+}
+
+.aw-aether-module-description {
+	flex: 1;
+	margin: 20px 0;
+	color: var(--aether-muted);
+	line-height: 1.6;
+}
+
+.aw-aether-module-meta {
+	margin: 0;
+	border-top: 1px solid rgba(232, 221, 200, 0.08);
+}
+
+.aw-aether-module-meta div {
+	display: flex;
+	justify-content: space-between;
+	gap: 18px;
+	padding: 10px 0;
+	border-bottom: 1px solid rgba(232, 221, 200, 0.06);
+}
+
+.aw-aether-module-meta dt {
+	color: var(--aether-muted);
+}
+
+.aw-aether-module-meta dd {
+	margin: 0;
+	color: var(--aether-ivory);
+	text-align: right;
+}
+
+@media (max-width: 1100px) {
+	.aw-aether-module-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 782px) {
+	.aw-aether-module-count {
+		margin-top: 20px;
+	}
+
+	.aw-aether-module-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.aw-aether-module-card {
+		min-height: 0;
+	}
+}
+

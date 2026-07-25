@@ -1,17 +1,33 @@
-# Sprint 19
+# Sprint 20
 
-**Status:** Complete  
-**Target Release:** v0.19.0
+**Status:** Active  
+**Target Release:** v0.20.0
 
 ## Goal
 
-Implement safe persistence for experience configuration while keeping the Experience Provider as the source of default definitions.
+Establish Aether Experience Engine as a standalone product with a clear identity, reliable repository structure and a stronger foundation for future commercial development.
 
 ## Tasks
 
-- [x] Add `experience_overrides` to `AW_Aether_Settings`
-- [x] Safely retrieve stored overrides
-- [x] Merge provider defaults with stored overrides
-- [x] Validate override values
-- [x] Confirm runtime receives resolved configuration
-- [ ] Test and release v0.19.0
+- [x] Rename the GitHub repository to `aether-experience-engine`
+- [x] Update the local Git remote to the official SSH address
+- [x] Restore the complete project history to GitHub
+- [x] Preserve the previous README-only history on a backup branch
+- [x] Publish all existing version tags
+- [x] Replace the Alchemy Wares README with the Aether Experience Engine README
+- [ ] Update remaining product names and version references in the plugin
+- [ ] Review the product roadmap for standalone development
+- [ ] Define the first Experience Editor milestone
+- [ ] Update project status documentation
+
+## Deliverables
+
+- Clean and recoverable GitHub history
+- Standalone Aether product identity
+- Updated repository documentation
+- Agreed direction for the Experience Editor
+- Release-ready v0.20.0 documentation
+
+## Notes
+
+The Temple particle improvement experiment was discontinued because the proposed visual changes were not being applied by the runtime. Particle tuning will return later as part of the Experience Editor and visual-layer controls.

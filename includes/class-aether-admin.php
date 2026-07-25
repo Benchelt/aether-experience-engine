@@ -211,7 +211,92 @@ final class AW_Aether_Admin {
 	 *
 	 * @return void
 	 */
+	/**
+	 * Build the data used by the Dashboard workspace.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function dashboard_data() {
+
+		$engine      = AW_Aether::instance();
+		$registry    = $engine->modules();
+		$provider    = $engine->experiences();
+		$settings    = AW_Aether_Settings::all();
+		$default     = isset( $settings['default_experience'] )
+			? $settings['default_experience']
+			: 'Temple';
+		$experience  = $provider ? $provider->get( $default ) : null;
+
+		if ( ! is_array( $experience ) ) {
+			$experiences = $provider ? $provider->all() : array();
+			$default     = ! empty( $experiences )
+				? (string) array_key_first( $experiences )
+				: 'Unavailable';
+			$experience  = isset( $experiences[ $default ] )
+				? $experiences[ $default ]
+				: array();
+		}
+
+		$audio     = isset( $experience['audio'] ) && is_array( $experience['audio'] )
+			? $experience['audio']
+			: array();
+		$visual    = isset( $experience['visual'] ) && is_array( $experience['visual'] )
+			? $experience['visual']
+			: array();
+		$particles = isset( $visual['particles'] ) && is_array( $visual['particles'] )
+			? $visual['particles']
+			: array();
+
+		$volume = isset( $audio['volume'] )
+			? (int) round( (float) $audio['volume'] * 100 )
+			: 0;
+
+		$preset = isset( $visual['preset'] )
+			? ucwords(
+				str_replace(
+					array( '-', '_' ),
+					' ',
+					(string) $visual['preset']
+				)
+			)
+			: 'None';
+
+		$particle_count = isset( $particles['count'] )
+			? absint( $particles['count'] )
+			: 0;
+
+		$particle_type = isset( $particles['type'] )
+			? sanitize_text_field( $particles['type'] )
+			: 'particles';
+
+		return array(
+			'runtime'          => ! empty( $settings['enabled'] )
+				? 'Ready'
+				: 'Disabled',
+			'engine_online'    => ! empty( $settings['enabled'] ),
+			'module_count'     => $registry ? $registry->count() : 0,
+			'experience_count' => $provider ? $provider->count() : 0,
+			'default_name'     => $default,
+			'ambience'         => ! empty( $experience['ambience'] ),
+			'audio_enabled'    => ! empty( $audio['enabled'] ),
+			'audio_volume'     => $volume,
+			'visual_enabled'   => ! empty( $visual['enabled'] ),
+			'visual_preset'    => $preset,
+			'particles_enabled'=> ! empty( $particles['enabled'] ),
+			'particle_count'   => $particle_count,
+			'particle_type'    => $particle_type,
+		);
+	}
+
+	/**
+	 * Render the dashboard.
+	 *
+	 * @return void
+	 */
 	private function render_dashboard() {
+
+		$data = $this->dashboard_data();
+
 		?>
 		<section class="aw-aether-hero">
 			<div>
@@ -229,7 +314,16 @@ final class AW_Aether_Admin {
 				<span></span>
 
 				<div>
-					<strong>Engine Online</strong>
+					<strong>
+						<?php
+						echo esc_html(
+							$data['engine_online']
+								? 'Engine Online'
+								: 'Engine Disabled'
+						);
+						?>
+					</strong>
+
 					<small>
 						Version <?php echo esc_html( AW_AETHER_VERSION ); ?>
 					</small>
@@ -240,48 +334,85 @@ final class AW_Aether_Admin {
 		<section class="aw-aether-stats">
 			<article>
 				<span>Runtime</span>
-				<strong>Ready</strong>
+				<strong><?php echo esc_html( $data['runtime'] ); ?></strong>
 			</article>
 
 			<article>
 				<span>Modules</span>
-				<strong>5</strong>
+				<strong><?php echo esc_html( $data['module_count'] ); ?></strong>
 			</article>
 
 			<article>
 				<span>Experiences</span>
-				<strong>1</strong>
+				<strong><?php echo esc_html( $data['experience_count'] ); ?></strong>
 			</article>
 
 			<article>
 				<span>Default</span>
-				<strong>Temple</strong>
+				<strong><?php echo esc_html( $data['default_name'] ); ?></strong>
 			</article>
 		</section>
 
 		<section class="aw-aether-panel">
 			<p class="aw-aether-label">Active Experience</p>
-			<h2>Temple</h2>
+
+			<h2><?php echo esc_html( $data['default_name'] ); ?></h2>
 
 			<div class="aw-aether-details">
 				<div>
 					<span>Ambience</span>
-					<strong>Enabled</strong>
+					<strong>
+						<?php
+						echo esc_html(
+							$data['ambience']
+								? 'Enabled'
+								: 'Disabled'
+						);
+						?>
+					</strong>
 				</div>
 
 				<div>
 					<span>Audio volume</span>
-					<strong>40%</strong>
+					<strong>
+						<?php
+						echo esc_html(
+							$data['audio_enabled']
+								? $data['audio_volume'] . '%'
+								: 'Disabled'
+						);
+						?>
+					</strong>
 				</div>
 
 				<div>
 					<span>Visual preset</span>
-					<strong>Temple</strong>
+					<strong>
+						<?php
+						echo esc_html(
+							$data['visual_enabled']
+								? $data['visual_preset']
+								: 'Disabled'
+						);
+						?>
+					</strong>
 				</div>
 
 				<div>
 					<span>Particles</span>
-					<strong>40 gold dust</strong>
+					<strong>
+						<?php
+						echo esc_html(
+							$data['particles_enabled']
+								? sprintf(
+									'%d %s',
+									$data['particle_count'],
+									$data['particle_type']
+								)
+								: 'Disabled'
+						);
+						?>
+					</strong>
 				</div>
 			</div>
 		</section>
@@ -474,11 +605,114 @@ final class AW_Aether_Admin {
 	 * @return void
 	 */
 	private function render_modules() {
-		$this->render_placeholder(
-			'Runtime Components',
-			'Modules',
-			'Inspect and manage the services that power every Aether experience.'
-		);
+
+		$registry = AW_Aether::instance()->modules();
+		$modules  = $registry ? $registry->all() : array();
+
+		?>
+		<section class="aw-aether-page-heading">
+			<div>
+				<p class="aw-aether-label">Runtime Components</p>
+
+				<h2>Modules</h2>
+
+				<p>
+					Inspect the core services, features and interfaces registered
+					with the Aether Experience Engine.
+				</p>
+			</div>
+
+			<div class="aw-aether-module-count">
+				<strong><?php echo esc_html( count( $modules ) ); ?></strong>
+				<span>Registered</span>
+			</div>
+		</section>
+
+		<?php if ( empty( $modules ) ) : ?>
+
+			<section class="aw-aether-placeholder">
+				<span class="dashicons dashicons-admin-plugins" aria-hidden="true"></span>
+				<h3>No modules registered</h3>
+				<p>
+					Registered Aether modules will appear here automatically.
+				</p>
+			</section>
+
+		<?php else : ?>
+
+			<section class="aw-aether-module-grid">
+
+				<?php foreach ( $modules as $module_id => $module ) : ?>
+
+					<?php
+					$dependencies = array();
+
+					foreach ( $module['dependencies'] as $dependency_id ) {
+						$dependency = $registry->get( $dependency_id );
+
+						$dependencies[] = $dependency
+							? $dependency['name']
+							: ucwords(
+								str_replace( '-', ' ', $dependency_id )
+							);
+					}
+					?>
+
+					<article class="aw-aether-module-card">
+
+						<header class="aw-aether-module-card-header">
+							<div>
+								<span class="aw-aether-module-type">
+									<?php echo esc_html( ucfirst( $module['type'] ) ); ?>
+								</span>
+
+								<h3><?php echo esc_html( $module['name'] ); ?></h3>
+							</div>
+
+							<span
+								class="aw-aether-module-status <?php echo $module['enabled'] ? 'is-enabled' : 'is-disabled'; ?>"
+							>
+								<?php echo $module['enabled'] ? 'Enabled' : 'Disabled'; ?>
+							</span>
+						</header>
+
+						<p class="aw-aether-module-description">
+							<?php echo esc_html( $module['description'] ); ?>
+						</p>
+
+						<dl class="aw-aether-module-meta">
+							<div>
+								<dt>Identifier</dt>
+								<dd><?php echo esc_html( $module_id ); ?></dd>
+							</div>
+
+							<div>
+								<dt>Version</dt>
+								<dd><?php echo esc_html( $module['version'] ); ?></dd>
+							</div>
+
+							<div>
+								<dt>Dependencies</dt>
+								<dd>
+									<?php
+									echo esc_html(
+										$dependencies
+											? implode( ', ', $dependencies )
+											: 'None'
+									);
+									?>
+								</dd>
+							</div>
+						</dl>
+
+					</article>
+
+				<?php endforeach; ?>
+
+			</section>
+
+		<?php endif; ?>
+		<?php
 	}
 
 	/**
