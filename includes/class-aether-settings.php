@@ -64,6 +64,63 @@ final class AW_Aether_Settings {
 	}
 
 	/**
+	 * Sanitize submitted settings.
+	 *
+	 * Existing and unknown settings are preserved so that saving the
+	 * global settings form cannot remove experience configuration.
+	 *
+	 * @param mixed $input Submitted settings.
+	 * @return array
+	 */
+	public static function sanitize( $input ) {
+
+		$input     = is_array( $input ) ? $input : array();
+		$sanitized = self::all();
+
+		$sanitized['enabled'] = ! empty( $input['enabled'] );
+
+		$sanitized['audio_enabled'] = ! empty(
+			$input['audio_enabled']
+		);
+
+		$sanitized['visuals_enabled'] = ! empty(
+			$input['visuals_enabled']
+		);
+
+		$sanitized['ui_enabled'] = ! empty(
+			$input['ui_enabled']
+		);
+
+		if ( isset( $input['default_experience'] ) ) {
+			$sanitized['default_experience'] = sanitize_text_field(
+				$input['default_experience']
+			);
+		}
+
+		if ( isset( $input['default_volume'] ) ) {
+			$sanitized['default_volume'] = max(
+				0,
+				min( 100, absint( $input['default_volume'] ) )
+			);
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Save submitted settings.
+	 *
+	 * @param mixed $input Submitted settings.
+	 * @return bool
+	 */
+	public static function update( $input ) {
+		return update_option(
+			self::OPTION_NAME,
+			self::sanitize( $input )
+		);
+	}
+
+	/**
 	 * Return stored experience overrides.
 	 *
 	 * @return array

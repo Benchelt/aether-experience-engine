@@ -34,6 +34,9 @@ final class AW_Aether_Admin {
 	public function register() {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
+		// Handle settings form submissions.
+		add_action( 'admin_init', array( $this, 'handle_settings_save' ) );
 	}
 
 	/**
@@ -69,6 +72,14 @@ final class AW_Aether_Admin {
 			AW_AETHER_URL . 'assets/css/admin.css',
 			array(),
 			filemtime( AW_AETHER_PATH . 'assets/css/admin.css' )
+		);
+
+		wp_enqueue_script(
+			'aw-aether-admin',
+			AW_AETHER_URL . 'assets/js/admin.js',
+			array(),
+			filemtime( AW_AETHER_PATH . 'assets/js/admin.js' ),
+			true
 		);
 	}
 
@@ -476,11 +487,233 @@ final class AW_Aether_Admin {
 	 * @return void
 	 */
 	private function render_settings() {
-		$this->render_placeholder(
-			'Engine Configuration',
-			'Settings',
-			'Global Aether Engine preferences will be managed from this workspace.'
+
+		$settings = AW_Aether_Settings::all();
+
+		$experiences = AW_Aether::instance()
+			->experiences()
+			->all();
+
+		?>
+		<section class="aw-aether-page-heading">
+			<div>
+				<p class="aw-aether-label">Engine Configuration</p>
+
+				<h2>Settings</h2>
+
+				<p>
+					Control the global behaviour of the Aether Experience Engine.
+				</p>
+			</div>
+		</section>
+
+		<?php if ( isset( $_GET['settings-updated'] ) ) : ?>
+			<div class="notice notice-success is-dismissible">
+				<p>Aether Engine settings saved successfully.</p>
+			</div>
+		<?php endif; ?>
+
+		<form method="post" class="aw-aether-settings-form">
+
+			<?php
+			wp_nonce_field(
+				'aw_aether_save_settings',
+				'aw_aether_settings_nonce'
+			);
+			?>
+
+			<section class="aw-aether-settings-grid">
+
+				<article class="aw-aether-settings-panel">
+					<p class="aw-aether-label">General</p>
+					<h3>Engine State</h3>
+
+					<label class="aw-aether-setting-toggle">
+						<input
+							type="checkbox"
+							name="aw_aether_settings[enabled]"
+							value="1"
+							<?php checked( ! empty( $settings['enabled'] ) ); ?>
+						>
+						<span>
+							<strong>Enable Engine</strong>
+							<small>
+								Load the Aether runtime on the front end.
+							</small>
+						</span>
+					</label>
+
+					<label class="aw-aether-setting-toggle">
+						<input
+							type="checkbox"
+							name="aw_aether_settings[audio_enabled]"
+							value="1"
+							<?php checked( ! empty( $settings['audio_enabled'] ) ); ?>
+						>
+						<span>
+							<strong>Enable Audio</strong>
+							<small>
+								Allow experiences to use ambient sound.
+							</small>
+						</span>
+					</label>
+
+					<label class="aw-aether-setting-toggle">
+						<input
+							type="checkbox"
+							name="aw_aether_settings[visuals_enabled]"
+							value="1"
+							<?php checked( ! empty( $settings['visuals_enabled'] ) ); ?>
+						>
+						<span>
+							<strong>Enable Visuals</strong>
+							<small>
+								Allow experiences to display atmospheric effects.
+							</small>
+						</span>
+					</label>
+
+					<label class="aw-aether-setting-toggle">
+						<input
+							type="checkbox"
+							name="aw_aether_settings[ui_enabled]"
+							value="1"
+							<?php checked( ! empty( $settings['ui_enabled'] ) ); ?>
+						>
+						<span>
+							<strong>Enable Interface</strong>
+							<small>
+								Display front-end Aether controls.
+							</small>
+						</span>
+					</label>
+				</article>
+
+				<article class="aw-aether-settings-panel">
+					<p class="aw-aether-label">Experience</p>
+					<h3>Default Experience</h3>
+
+					<label
+						class="aw-aether-setting-field"
+						for="aw-aether-default-experience"
+					>
+						<span>Experience</span>
+
+						<select
+							id="aw-aether-default-experience"
+							name="aw_aether_settings[default_experience]"
+						>
+							<?php foreach ( $experiences as $name => $experience ) : ?>
+								<option
+									value="<?php echo esc_attr( $name ); ?>"
+									<?php selected( $settings['default_experience'], $name ); ?>
+								>
+									<?php echo esc_html( $name ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+
+						<small>
+							This experience loads when no page-specific override exists.
+						</small>
+					</label>
+				</article>
+
+				<article class="aw-aether-settings-panel">
+					<p class="aw-aether-label">Audio</p>
+					<h3>Default Volume</h3>
+
+					<label
+						class="aw-aether-setting-field"
+						for="aw-aether-default-volume"
+					>
+						<span>
+							Volume:
+							<strong
+								id="aw-aether-volume-value"
+							>
+								<?php echo esc_html( absint( $settings['default_volume'] ) ); ?>%
+							</strong>
+						</span>
+
+						<input
+							type="range"
+							id="aw-aether-default-volume"
+							name="aw_aether_settings[default_volume]"
+							min="0"
+							max="100"
+							step="1"
+							value="<?php echo esc_attr( absint( $settings['default_volume'] ) ); ?>"
+						>
+
+						<small>
+							Sets the default master volume for ambient audio.
+						</small>
+					</label>
+				</article>
+
+			</section>
+
+			<div class="aw-aether-settings-actions">
+				<div>
+					<strong>Ready to apply your changes?</strong>
+					<small>
+						Saved settings are used by the Aether runtime immediately.
+					</small>
+				</div>
+
+				<button
+					type="submit"
+					name="aw_aether_save_settings"
+					value="1"
+					class="aw-aether-button"
+				>
+					Save Settings
+				</button>
+			</div>
+		</form>
+		<?php
+	}
+
+	/**
+	 * Handle Settings form submissions.
+	 *
+	 * @return void
+	 */
+	public function handle_settings_save() {
+
+		// No settings form was submitted.
+		if ( ! isset( $_POST['aw_aether_save_settings'] ) ) {
+			return;
+		}
+
+		// Only administrators may change Aether settings.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die(
+				esc_html__( 'You are not permitted to change Aether Engine settings.', 'alchemy-aether-engine' )
+			);
+		}
+
+		// Verify that the request originated from the Aether settings form.
+		check_admin_referer(
+			'aw_aether_save_settings',
+			'aw_aether_settings_nonce'
 		);
+
+		$submitted = isset( $_POST['aw_aether_settings'] )
+			? wp_unslash( $_POST['aw_aether_settings'] )
+			: array();
+
+		AW_Aether_Settings::update( $submitted );
+
+		$redirect_url = add_query_arg(
+			'settings-updated',
+			'true',
+			$this->view_url( 'settings' )
+		);
+
+		wp_safe_redirect( $redirect_url );
+		exit;
 	}
 
 	/**

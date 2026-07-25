@@ -560,3 +560,183 @@
 		font-size: 40px;
 	}
 }
+
+/* ---------------------------------------------------------
+ * Settings workspace
+ * --------------------------------------------------------- */
+
+.aw-aether-settings-form {
+	max-width: 1180px;
+}
+
+.aw-aether-settings-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	margin-top: 28px;
+}
+
+.aw-aether-settings-panel {
+	padding: 28px;
+	border: 1px solid rgba(198, 167, 94, 0.24);
+	border-radius: 16px;
+	background:
+		linear-gradient(
+			145deg,
+			rgba(20, 17, 22, 0.98),
+			rgba(12, 10, 14, 0.98)
+		);
+	box-shadow: 0 18px 45px rgba(13, 11, 14, 0.12);
+}
+
+.aw-aether-settings-panel:first-child {
+	grid-row: span 2;
+}
+
+.aw-aether-settings-panel h3 {
+	margin: 8px 0 22px;
+	color: #e8ddc8;
+	font-family: "Cormorant Garamond", Georgia, serif;
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.aw-aether-setting-toggle {
+	display: grid;
+	grid-template-columns: 22px minmax(0, 1fr);
+	align-items: start;
+	gap: 14px;
+	padding: 18px 0;
+	border-top: 1px solid rgba(232, 221, 200, 0.09);
+	cursor: pointer;
+}
+
+.aw-aether-setting-toggle:first-of-type {
+	border-top: 0;
+}
+
+.aw-aether-setting-toggle input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	margin: 3px 0 0;
+	accent-color: #c6a75e;
+}
+
+.aw-aether-setting-toggle span {
+	display: grid;
+	gap: 5px;
+}
+
+.aw-aether-setting-toggle strong {
+	color: #f2eadb;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.aw-aether-setting-toggle small,
+.aw-aether-setting-field small {
+	color: rgba(232, 221, 200, 0.62);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.aw-aether-setting-field {
+	display: grid;
+	gap: 12px;
+}
+
+.aw-aether-setting-field > span {
+	color: #f2eadb;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.aw-aether-setting-field select {
+	width: 100%;
+	min-height: 44px;
+	padding: 8px 40px 8px 12px;
+	border: 1px solid rgba(198, 167, 94, 0.38);
+	border-radius: 8px;
+	background: #161219;
+	color: #f2eadb;
+	box-shadow: none;
+}
+
+.aw-aether-setting-field select:focus {
+	border-color: #c6a75e;
+	box-shadow: 0 0 0 1px #c6a75e;
+	outline: none;
+}
+
+.aw-aether-setting-field input[type="range"] {
+	width: 100%;
+	margin: 6px 0 2px;
+	accent-color: #c6a75e;
+	cursor: pointer;
+}
+
+.aw-aether-settings-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin-top: 24px;
+	padding: 22px 24px;
+	border: 1px solid rgba(198, 167, 94, 0.2);
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.72);
+	box-shadow: 0 14px 36px rgba(13, 11, 14, 0.08);
+}
+
+.aw-aether-settings-actions > div {
+	display: grid;
+	gap: 4px;
+}
+
+.aw-aether-settings-actions strong {
+	color: #0d0b0e;
+	font-size: 15px;
+}
+
+.aw-aether-settings-actions small {
+	color: rgba(13, 11, 14, 0.62);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.aw-aether-settings-actions .aw-aether-button {
+	min-width: 150px;
+	justify-content: center;
+}
+
+.aw-aether-settings-form .notice {
+	margin: 0 0 20px;
+}
+
+@media (max-width: 900px) {
+
+	.aw-aether-settings-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.aw-aether-settings-panel:first-child {
+		grid-row: auto;
+	}
+}
+
+@media (max-width: 600px) {
+
+	.aw-aether-settings-panel {
+		padding: 22px;
+	}
+
+	.aw-aether-settings-actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.aw-aether-settings-actions .aw-aether-button {
+		width: 100%;
+	}
+}
