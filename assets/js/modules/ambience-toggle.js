@@ -1,7 +1,7 @@
 /**
  * Aether Ambience Toggle
  *
- * Version: 0.5.0
+ * Version: 0.21.0
  */
 
 (function (window, document) {

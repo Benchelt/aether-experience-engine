@@ -3,7 +3,7 @@
  *
  * Manages the shared rendering surface for Aether visual effects.
  *
- * Version: 0.13.0
+ * Version: 0.21.0
  */
 
 (function (window, document) {

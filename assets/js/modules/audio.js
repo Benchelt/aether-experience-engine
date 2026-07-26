@@ -1,7 +1,7 @@
 /**
  * Aether Audio Module
  *
- * Version: 0.9.0
+ * Version: 0.21.0
  */
 
 (function (window) {

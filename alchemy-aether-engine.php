@@ -3,7 +3,7 @@
  * Plugin Name: Alchemy Aether Engine
  * Plugin URI: https://alchemywares.com
  * Description: Environmental experience engine powering immersive audio, atmospheres, themes and visual effects across the Alchemy Wares platform.
- * Version: 0.18.0
+ * Version: 0.21.0
  * Requires at least: 6.8
  * Requires PHP: 8.2
  * Author: JohnBen Roberts
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin version.
-define( 'AW_AETHER_VERSION', '0.18.0' );
+define( 'AW_AETHER_VERSION', '0.21.0' );
 
 // Plugin paths.
 define( 'AW_AETHER_FILE', __FILE__ );

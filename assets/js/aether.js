@@ -2,7 +2,7 @@
  * Aether Experience Engine
  * Browser Runtime
  *
- * Version: 0.11.0
+ * Version: 0.21.0
  */
 
 (function (window) {
@@ -167,7 +167,7 @@
         };
 
         const Aether = {
-                version: '0.11.0',
+                version: '0.21.0',
 
                 config,
 

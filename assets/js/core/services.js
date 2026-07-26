@@ -2,7 +2,7 @@
  * Aether Experience Engine
  * Services Registry
  *
- * Version: 0.8.0
+ * Version: 0.21.0
  */
 
 (function (window) {
