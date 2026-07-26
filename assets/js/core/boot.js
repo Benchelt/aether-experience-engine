@@ -56,18 +56,51 @@
             return;
         }
 
-        if (!window.Aether.Experience.has('Temple')) {
+        const runtimeSettings =
+            window.AetherRuntimeSettings &&
+            typeof window.AetherRuntimeSettings === 'object'
+                ? window.AetherRuntimeSettings
+                : {};
+
+        const configuredDefault =
+            typeof runtimeSettings.defaultExperience === 'string'
+                ? runtimeSettings.defaultExperience.trim()
+                : '';
+
+        const registeredExperiences =
+            window.Aether.Experience.list();
+
+        let defaultExperience =
+            configuredDefault || 'Temple';
+
+        if (!window.Aether.Experience.has(defaultExperience)) {
+            const fallbackExperience =
+                window.Aether.Experience.has('Temple')
+                    ? 'Temple'
+                    : registeredExperiences[0] || null;
+
             console.warn(
-                '[Aether Boot] Default experience "Temple" was not registered.'
+                `[Aether Boot] Configured default experience "${defaultExperience}" was not registered.`,
+                {
+                    fallback: fallbackExperience
+                }
             );
 
-            return;
+            if (!fallbackExperience) {
+                console.warn(
+                    '[Aether Boot] No registered experience is available to activate.'
+                );
+
+                return;
+            }
+
+            defaultExperience = fallbackExperience;
         }
 
-        window.Aether.load('Temple');
+        window.Aether.load(defaultExperience);
 
         console.log(
-            '[Aether Boot] Default experience "Temple" activated.'
+            `[Aether Boot] Default experience "${defaultExperience}" activated.`
         );
     }
 

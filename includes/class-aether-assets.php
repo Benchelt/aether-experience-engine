@@ -140,6 +140,17 @@ final class AW_Aether_Assets {
 		        true
 		);
 
+		wp_localize_script(
+			'aw-aether-boot',
+			'AetherRuntimeSettings',
+			array(
+				'defaultExperience' => AW_Aether_Settings::get(
+					'default_experience',
+					'Temple'
+				),
+			)
+		);
+
 		wp_enqueue_style(
 			'aw-aether-visual',
 			AW_AETHER_URL . 'assets/css/visual.css',
