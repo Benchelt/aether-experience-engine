@@ -467,6 +467,10 @@
 	background: rgba(255, 255, 255, 0.018);
 }
 
+.aw-aether-experience-meta .aw-aether-experience-meta-wide {
+	grid-column: 1 / -1;
+}
+
 .aw-aether-experience-meta span,
 .aw-aether-experience-meta strong {
 	display: block;

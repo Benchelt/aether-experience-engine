@@ -469,6 +469,31 @@ final class AW_Aether_Admin {
 				foreach ( $experiences as $name => $experience ) :
 					$index++;
 
+					$metadata = isset( $experience['metadata'] )
+						&& is_array( $experience['metadata'] )
+						? $experience['metadata']
+						: array();
+
+					$title = isset( $metadata['title'] )
+						? sanitize_text_field( $metadata['title'] )
+						: sanitize_text_field( $name );
+
+					$description = isset( $metadata['description'] )
+						? sanitize_text_field( $metadata['description'] )
+						: 'Atmospheric configuration supplied by the Aether Experience Provider.';
+
+					$category = isset( $metadata['category'] )
+						? sanitize_text_field( $metadata['category'] )
+						: 'Atmospheric Experience';
+
+					$author = isset( $metadata['author'] )
+						? sanitize_text_field( $metadata['author'] )
+						: 'Unknown';
+
+					$version = isset( $metadata['version'] )
+						? sanitize_text_field( $metadata['version'] )
+						: '1.0.0';
+
 					$audio = isset( $experience['audio'] )
 						&& is_array( $experience['audio'] )
 						? $experience['audio']
@@ -520,33 +545,27 @@ final class AW_Aether_Admin {
 									<p class="aw-aether-label">
 										<?php
 										echo esc_html(
-											$is_default
-												? 'Default Experience'
-												: 'Available Experience'
+											(
+												$is_default
+													? 'Default Experience'
+													: 'Available Experience'
+											)
+											. ' · '
+											. $category
 										);
 										?>
 									</p>
 
-									<h3><?php echo esc_html( $name ); ?></h3>
+									<h3><?php echo esc_html( $title ); ?></h3>
 								</div>
 
 								<span class="aw-aether-experience-version">
-									<?php
-									echo esc_html(
-										str_pad(
-											(string) $index,
-											2,
-											'0',
-											STR_PAD_LEFT
-										)
-									);
-									?>
+									<?php echo esc_html( 'v' . $version ); ?>
 								</span>
 							</div>
 
 							<p class="aw-aether-experience-description">
-								Atmospheric configuration supplied by the
-								Aether Experience Provider.
+								<?php echo esc_html( $description ); ?>
 							</p>
 
 							<div class="aw-aether-capabilities">
@@ -564,6 +583,11 @@ final class AW_Aether_Admin {
 							</div>
 
 							<div class="aw-aether-experience-meta">
+								<div class="aw-aether-experience-meta-wide">
+									<span>Author</span>
+									<strong><?php echo esc_html( $author ); ?></strong>
+								</div>
+
 								<div>
 									<span>Volume</span>
 									<strong><?php echo esc_html( $volume ); ?>%</strong>
