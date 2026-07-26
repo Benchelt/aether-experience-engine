@@ -114,14 +114,18 @@
                 );
             }
 
-            const configuration = {
+            const definition = {
                 ...copy(experiences.get(experienceName)),
                 ...copy(overrides)
             };
 
             activeExperience = {
                 name: experienceName,
-                configuration
+                metadata: definition.metadata || {
+                    name: experienceName
+                },
+                capabilities: definition.capabilities || {},
+                configuration: definition.configuration || definition
             };
 
             window.AetherEvents.emit(
