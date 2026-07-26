@@ -61,6 +61,47 @@ final class AW_Aether_Experience_Provider {
 					),
 				),
 			),
+
+			'Forest Shrine' => array(
+				'metadata' => array(
+					'name'        => 'Forest Shrine',
+					'title'       => 'Forest Shrine',
+					'description' => 'A tranquil woodland sanctuary with soft resonant audio and slow-moving pollen drifting through an ancient green canopy.',
+					'category'    => 'Nature',
+					'icon'        => 'forest-shrine',
+					'author'      => 'Alchemy Wares',
+					'version'     => '1.0.0',
+				),
+
+				'capabilities' => array(
+					'audio'     => true,
+					'visual'    => true,
+					'particles' => true,
+				),
+
+				'ambience' => true,
+
+				'audio' => array(
+					'enabled' => true,
+					'volume'  => 0.3,
+				),
+
+				'visual' => array(
+					'enabled' => true,
+					'preset'  => 'forest-shrine',
+
+					'particles' => array(
+						'enabled'  => true,
+						'type'     => 'pollen',
+						'count'    => 55,
+						'colour'   => '132, 168, 116',
+						'minSize'  => 0.8,
+						'maxSize'  => 3.0,
+						'minSpeed' => 0.04,
+						'maxSpeed' => 0.18,
+					),
+				),
+			),
 		);
 
 		/**
