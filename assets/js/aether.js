@@ -78,10 +78,12 @@
         const initializedModules = new WeakSet();
         const Services = window.AetherServices;
         const Experience = window.AetherExperience;
+        const Layers = window.AetherLayers;
 
         const coreServices = {
                 events: window.AetherEvents,
                 experience: Experience,
+                layers: Layers,
                 config: Config,
         };
 
@@ -180,6 +182,8 @@
                 Services,
 
                 Experience,
+
+                Layers,
 
                 start() {
                         if (state.started) {
