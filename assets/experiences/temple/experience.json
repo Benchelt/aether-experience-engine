@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "temple",
+  "name": "Temple",
+  "metadata": {
+    "title": "Temple",
+    "description": "A contemplative atmospheric experience with resonant audio, warm golden visuals and drifting temple dust.",
+    "category": "Meditation",
+    "author": "Alchemy Wares",
+    "version": "1.0.0",
+    "tags": [
+      "meditation",
+      "ritual",
+      "temple"
+    ],
+    "thumbnail": "thumbnail.webp",
+    "preview": "preview.webp"
+  },
+  "capabilities": {
+    "audio": true,
+    "visual": true,
+    "particles": true
+  },
+  "configuration": {
+    "ambience": true,
+    "audio": {
+      "enabled": true,
+      "volume": 0.4
+    },
+    "visual": {
+      "enabled": true,
+      "preset": "temple",
+      "particles": {
+        "enabled": true,
+        "type": "dust",
+        "count": 40,
+        "colour": "198, 167, 94",
+        "minSize": 0.7,
+        "maxSize": 2.4,
+        "minSpeed": 0.08,
+        "maxSpeed": 0.28
+      }
+    }
+  }
+}

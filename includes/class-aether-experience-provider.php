@@ -20,7 +20,7 @@ final class AW_Aether_Experience_Provider {
 	 * @return array<string, array<string, mixed>>
 	 */
 	public function all() {
-		$experiences = array(
+		$fallback_experiences = array(
 			'Temple' => array(
 				'metadata' => array(
 					'name'        => 'Temple',
@@ -104,6 +104,18 @@ final class AW_Aether_Experience_Provider {
 			),
 		);
 
+		/*
+		 * Load packaged manifests first. Existing PHP definitions remain
+		 * available as safe fallbacks.
+		 */
+		$experiences = $this->load_manifests();
+
+		foreach ( $fallback_experiences as $name => $definition ) {
+			if ( ! isset( $experiences[ $name ] ) ) {
+				$experiences[ $name ] = $definition;
+			}
+		}
+
 		/**
 		 * Filter Aether experience definitions.
 		 *
@@ -118,6 +130,128 @@ final class AW_Aether_Experience_Provider {
 			$experiences,
 			AW_Aether_Settings::experience_overrides()
 		);
+	}
+
+	/**
+	 * Load experience definitions from package manifests.
+	 *
+	 * Invalid manifests are skipped so the existing PHP fallback
+	 * definitions remain available.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	private function load_manifests() {
+		$directory = AW_AETHER_PATH . 'assets/experiences';
+
+		if ( ! is_dir( $directory ) ) {
+			return array();
+		}
+
+		$manifest_paths = glob(
+			trailingslashit( $directory ) . '*/experience.json'
+		);
+
+		if ( false === $manifest_paths ) {
+			return array();
+		}
+
+		sort( $manifest_paths );
+
+		$experiences = array();
+
+		foreach ( $manifest_paths as $manifest_path ) {
+			if ( ! is_readable( $manifest_path ) ) {
+				continue;
+			}
+
+			$json = file_get_contents( $manifest_path );
+
+			if ( false === $json ) {
+				continue;
+			}
+
+			$manifest = json_decode( $json, true );
+
+			if (
+				JSON_ERROR_NONE !== json_last_error() ||
+				! is_array( $manifest )
+			) {
+				continue;
+			}
+
+			$definition = $this->normalise_manifest(
+				$manifest,
+				$manifest_path
+			);
+
+			if ( null === $definition ) {
+				continue;
+			}
+
+			$name = $definition['metadata']['name'];
+
+			$experiences[ $name ] = $definition;
+		}
+
+		return $experiences;
+	}
+
+	/**
+	 * Convert a package manifest into the provider runtime structure.
+	 *
+	 * @param array  $manifest      Decoded manifest.
+	 * @param string $manifest_path Absolute manifest path.
+	 * @return array<string, mixed>|null
+	 */
+	private function normalise_manifest(
+		array $manifest,
+		$manifest_path
+	) {
+		if (
+			empty( $manifest['name'] ) ||
+			! is_string( $manifest['name'] ) ||
+			empty( $manifest['metadata'] ) ||
+			! is_array( $manifest['metadata'] ) ||
+			empty( $manifest['configuration'] ) ||
+			! is_array( $manifest['configuration'] )
+		) {
+			return null;
+		}
+
+		$name = sanitize_text_field( $manifest['name'] );
+
+		if ( '' === $name ) {
+			return null;
+		}
+
+		$metadata = $manifest['metadata'];
+
+		$metadata['name'] = $name;
+
+		if ( empty( $metadata['title'] ) ) {
+			$metadata['title'] = $name;
+		}
+
+		$metadata['id'] = isset( $manifest['id'] )
+			? sanitize_key( $manifest['id'] )
+			: sanitize_key( $name );
+
+		$metadata['schema_version'] = isset( $manifest['schema_version'] )
+			? sanitize_text_field( $manifest['schema_version'] )
+			: '1.0';
+
+		$metadata['manifest'] = wp_normalize_path( $manifest_path );
+
+		$definition = $manifest['configuration'];
+
+		$definition['metadata'] = $metadata;
+
+		$definition['capabilities'] = isset( $manifest['capabilities'] )
+			&& is_array( $manifest['capabilities'] )
+				? $manifest['capabilities']
+				: array();
+
+		return $definition;
 	}
 
 	/**
