@@ -22,6 +22,22 @@ final class AW_Aether_Experience_Provider {
 	public function all() {
 		$experiences = array(
 			'Temple' => array(
+				'metadata' => array(
+					'name'        => 'Temple',
+					'title'       => 'Temple',
+					'description' => 'A contemplative atmospheric experience with resonant audio, warm golden visuals and drifting temple dust.',
+					'category'    => 'Meditation',
+					'icon'        => 'temple',
+					'author'      => 'Alchemy Wares',
+					'version'     => '1.0.0',
+				),
+
+				'capabilities' => array(
+					'audio'     => true,
+					'visual'    => true,
+					'particles' => true,
+				),
+
 				'ambience' => true,
 
 				'audio' => array(
